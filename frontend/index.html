@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/shield-icon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="LibertySafe - Freedom of Information, Protected Forever" />
+    <meta name="keywords" content="bitcoin, ordinals, encryption, censorship-resistant, journalism, freedom" />
+    <title>LibertySafe - Censorship-Resistant Document Storage</title>
+
+    <!-- Preload critical fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        /* Critical CSS for loading state */
+        body {
+            margin: 0;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #f9fafb;
+            color: #111827;
+        }
+
+        .dark body {
+            background: #111827;
+            color: #f9fafb;
+        }
+
+        #loading {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            font-family: 'Inter', sans-serif;
+            z-index: 9999;
+        }
+
+        .loading-content {
+            text-align: center;
+        }
+
+        .shield {
+            width: 64px;
+            height: 64px;
+            margin: 0 auto 20px;
+            background: #4CAF50;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+
+            50% {
+                transform: scale(1.1);
+                opacity: 0.8;
+            }
+        }
+
+        .loading-text {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .loading-subtext {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="root">
+        <div id="loading">
+            <div class="loading-content">
+                <div class="shield">🛡️</div>
+                <div class="loading-text">LibertySafe</div>
+                <div class="loading-subtext">Loading secure platform...</div>
+            </div>
+        </div>
+    </div>
+    <script type="module" src="/src/main.tsx"></script>
+
+    <script>
+        // Remove loading screen when React app loads
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                const loading = document.getElementById('loading');
+                if (loading) {
+                    loading.style.opacity = '0';
+                    loading.style.transition = 'opacity 0.5s ease';
+                    setTimeout(() => loading.remove(), 500);
+                }
+            }, 1000);
+        });
+    </script>
+</body>
+
+</html>

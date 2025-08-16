@@ -1,0 +1,100 @@
+services:
+  mongodb:
+    image: mongo:7.0
+    container_name: libertysafe-mongodb
+    restart: always
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_DATABASE: libertysafe
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: libertysafe123
+    volumes:
+      - mongodb_data:/data/db
+      - ./mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+    networks:
+      - libertysafe-network
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/libertysafe --quiet
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  redis:
+    image: redis:7.0-alpine
+    container_name: libertysafe-redis
+    restart: always
+    ports:
+      - "6380:6379" # Changed from 6379:6379 to 6380:6379
+    volumes:
+      - redis_data:/data
+    networks:
+      - libertysafe-network
+    command: redis-server --appendonly yes
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      interval: 30s
+      timeout: 3s
+      retries: 5
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: libertysafe-backend
+    restart: always
+    ports:
+      - "5000:5000"
+    environment:
+      NODE_ENV: development
+      PORT: 5000
+      MONGODB_URI: mongodb://admin:libertysafe123@mongodb:27017/libertysafe?authSource=admin
+      REDIS_URL: redis://redis:6379 # This stays the same (internal Docker network)
+      JWT_SECRET: libertysafe-super-secret-jwt-key-for-development-2025
+      PINATA_API_KEY: your-pinata-api-key-here
+      PINATA_SECRET_KEY: your-pinata-secret-key-here
+      ORDINALSBOT_API_KEY: your-ordinalsbot-api-key-here
+      BITCOIN_RECEIVE_ADDRESS: bc1qexampleaddresshere
+      MAX_FILE_SIZE: 52428800
+      BCRYPT_ROUNDS: 12
+    depends_on:
+      mongodb:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - libertysafe-network
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
+      - uploads_data:/app/uploads
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: libertysafe-frontend
+    restart: always
+    ports:
+      - "3000:80"
+    environment:
+      VITE_API_URL: http://localhost:5000/api
+    depends_on:
+      - backend
+    networks:
+      - libertysafe-network
+
+volumes:
+  mongodb_data:
+    driver: local
+  redis_data:
+    driver: local
+  uploads_data:
+    driver: local
+
+networks:
+  libertysafe-network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16

@@ -1,0 +1,30 @@
+{
+    "document": {
+        "type": "freedom-document",
+        "title": "Example Document",
+        "description": "A sample document showcasing LibertySafe integration",
+        "category": "journalism",
+        "tags": [
+            "freedom",
+            "censorship-resistance",
+            "journalism"
+        ],
+        "author": "Anonymous",
+        "createdAt": "2025-08-16T00:00:00Z",
+        "encrypted": true,
+        "fileHash": "abc123...",
+        "fileSize": 1024000,
+        "mimeType": "application/pdf",
+        "version": "1.0.0"
+    },
+    "libertysafe": {
+        "platform": "LibertySafe",
+        "version": "1.0.0",
+        "features": [
+            "encryption",
+            "censorship-resistance",
+            "bitcoin-storage"
+        ],
+        "freedomScore": 10
+    }
+}
